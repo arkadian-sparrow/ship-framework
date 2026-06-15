@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "ship-workflow",
+  "displayName": "Ship Workflow",
+  "version": "0.1.0",
+  "description": "Run the loop a senior engineer would on every non-trivial change — brainstorm, adversarial audit + pre-mortem, plan-as-prompt, TDD, non-skippable code review, drift check — and get interrupted only to merge or decide. Ships an evidence gate, a worktree guard, session handoff/resume, and a read-only auditor agent.",
+  "author": {
+    "name": "arkadian-sparrow"
+  },
+  "homepage": "https://github.com/arkadian-sparrow/ship-framework",
+  "repository": "https://github.com/arkadian-sparrow/ship-framework",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "engineering",
+    "tdd",
+    "code-review",
+    "worktree",
+    "automation",
+    "hooks",
+    "verification"
+  ]
+}

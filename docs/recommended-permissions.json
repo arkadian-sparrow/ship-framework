@@ -1,0 +1,33 @@
+{
+  "_comment": "Recommended permission rules to pair with ship-workflow. A plugin CANNOT install these — copy the deny/ask arrays into your own ~/.claude/settings.json (or .claude/settings.json in a project) under \"permissions\". These keep dangerous moments gated while most work runs hands-free. 'defaultMode':'auto' is what makes the workflow run without per-step approval prompts; omit it if you prefer to approve manually. The two Edit/Write entries in 'ask' are PLACEHOLDERS — replace the path with a shared main checkout you want agents to ask before editing directly, or delete them.",
+  "permissions": {
+    "defaultMode": "auto",
+    "deny": [
+      "Bash(git push origin main*)",
+      "Bash(git push --force*)",
+      "Bash(git push --force-with-lease*)",
+      "Bash(git reset --hard*)",
+      "Bash(git rebase -i*)",
+      "Bash(git branch -D*)",
+      "Bash(git clean -f*)",
+      "Bash(git reflog expire*)",
+      "Bash(sudo*)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(curl * | sh*)",
+      "Bash(curl * | bash*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)",
+      "Read(**/credentials/**)"
+    ],
+    "ask": [
+      "Bash(git merge:*)",
+      "Bash(gh pr merge:*)",
+      "Edit(/absolute/path/to/your/main-repo/**)",
+      "Write(/absolute/path/to/your/main-repo/**)"
+    ]
+  }
+}

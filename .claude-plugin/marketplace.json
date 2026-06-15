@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ship-framework",
+  "owner": {
+    "name": "arkadian-sparrow"
+  },
+  "description": "Ship Workflow — a disciplined, autonomous engineering loop for Claude Code.",
+  "plugins": [
+    {
+      "name": "ship-workflow",
+      "source": "./plugins/ship-workflow",
+      "description": "Run the same senior-engineer loop on every non-trivial change — audit, plan, TDD, non-skippable review, verify — with an evidence gate, a worktree guard, and handoff/resume. Interrupts you only to merge or decide.",
+      "version": "0.1.0"
+    }
+  ]
+}
