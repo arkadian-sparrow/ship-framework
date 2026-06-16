@@ -3,6 +3,7 @@
 **Plan it. Prove it. Ship it.** — a disciplined, autonomous engineering loop for [Claude Code](https://claude.com/claude-code).
 
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757?style=for-the-badge)](https://claude.com/claude-code)
+[![CI](https://img.shields.io/github/actions/workflow/status/arkadian-sparrow/ship-framework/ci.yml?style=for-the-badge&logo=github&label=CI)](https://github.com/arkadian-sparrow/ship-framework/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/arkadian-sparrow/ship-framework?style=for-the-badge&logo=github&color=181717)](https://github.com/arkadian-sparrow/ship-framework)
 
@@ -48,7 +49,7 @@ Every non-trivial change runs the same loop. Ceremony scales to the blast radius
 5. **Build, test-first** — `red → green → refactor` per step.
 6. **Review — non-skippable** — every diff is reviewed adversarially and every finding triaged (implemented, or rejected with a reason). A skipped review is made *visible* in the merge briefing, so it can't quietly vanish.
 7. **Drift check** — if the implementation outgrows the plan, re-plan or escalate.
-8. **Verify, then stop** — prove the checks actually ran, then surface a phone-friendly briefing and hand back control.
+8. **Verify, then stop** — prove the checks actually ran and are green, then surface a phone-friendly briefing and hand back control.
 
 ## Quickstart
 
@@ -76,6 +77,7 @@ Then **restart Claude Code** — hooks and agents load at session start. Kick of
 | `ship-auditor` | agent | Adversarial auditor powering the audit & pre-mortem lenses. No edit/write tools; uses Bash for read-only inspection only. |
 | evidence gate | Stop hook | Blocks a "done" stop if code changed but no test/lint/typecheck/build ran since. |
 | worktree guard | PreToolUse hook | Prompts before editing a shared *main* checkout in a repo that uses worktrees. |
+| PR gate | PreToolUse hook | Before `gh pr create`, asks you to run checks if none ran since your last edit. |
 | handoff / resume | hooks | Snapshots state + git facts on compact/edit; offers to resume on a fresh session. |
 
 ## Why it works
@@ -87,6 +89,16 @@ Most "AI just writes the code" failures are process failures. Ship Workflow targ
 - **Parallel sessions stomping each other** — the worktree guard prompts before you edit a shared main checkout, instead of silently shifting HEAD under another session.
 - **Lost context on `/compact` and restarts** — handoff/resume snapshots where you were and offers to pick it up, so a long task survives a context reset.
 - **Unfocused, soft audits** — the skeptic panel and pre-mortem run as read-only subagents with a forced adversarial stance, every finding carrying a severity.
+
+## Enforcing green before merge
+
+"All tests green before a PR" lives across three layers — and only the last truly enforces it:
+
+1. **The skill requires it.** Step 8 won't call a step done until the suite, typecheck, and lint are green, and the ready-to-merge briefing must carry that evidence.
+2. **A hook nudges at the boundary.** The `pr-gate` hook prompts before `gh pr create` if you edited code without running a check since. (Claude Code doesn't expose exit codes to hooks, so a hook can confirm a check *ran*, never that it *passed*.)
+3. **CI + branch protection enforces it.** The only thing that *actually* blocks a red PR from merging is GitHub branch protection with required status checks — server-side, unskippable:
+   - Add a workflow that runs your tests (this repo's [`ci.yml`](.github/workflows/ci.yml) runs `tests/test_hooks.py` as an example).
+   - Repo **Settings → Branches → Add rule** for `main` → **Require status checks to pass before merging**.
 
 ## Recommended setup
 

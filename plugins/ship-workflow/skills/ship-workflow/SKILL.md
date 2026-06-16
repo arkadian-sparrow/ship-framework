@@ -75,10 +75,13 @@ a checklist — the loop still works; you only lose that skill's scaffolding.*
    ready-to-merge briefing. No review record → the step is not done.
 7. **Drift check** — compare code to plan; a material change to future steps →
    escalate; otherwise update the plan and continue.
-8. **Step done** — `superpowers:verification-before-completion` (evidence that
-   tests/lint/build actually ran). For high-stakes this is the extra gate. Then
+8. **Step done — green before the PR.** `superpowers:verification-before-completion`:
+   the unit-test suite, typecheck, and lint must be **green** before you open or
+   merge a PR — never open a red PR. For high-stakes this is the extra gate. Then
    escalate the ready-to-merge briefing — which **MUST include the step-6 review
-   record** (no review record → the step isn't done) — and wait for the user.
+   record + the green-check evidence** (no review record → the step isn't done) —
+   and wait for the user. *Hooks confirm a check ran, not that it passed; the real
+   all-green gate is GitHub branch protection + required status checks (see README).*
 
 ## 3. Skeptic panel + pre-mortem
 
@@ -90,7 +93,7 @@ read-only). See `skeptic-panel.md` and `pre-mortem.md`.
 
 Interrupt the user — with a briefing (`briefing-template.md`) — only when:
 
-1. **Ready to merge** — step complete, all checks green.
+1. **Ready to merge** — step complete; the suite, typecheck, and lint are green (never open a red PR).
 2. **Real fork / design decision** — a branching path needs the user's call.
 3. **Drift changes the plan** — implementation materially alters future steps.
 4. **Stuck or severe risk** — can't get a step green after honest attempts, or a

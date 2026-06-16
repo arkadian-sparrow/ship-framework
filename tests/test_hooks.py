@@ -242,5 +242,36 @@ class Handoff(unittest.TestCase):
         self.assertNotIn("no handoff", out)
 
 
+class PrGate(unittest.TestCase):
+    def setUp(self):
+        self.sid = "shiptest-pr-" + str(os.getpid())
+        os.makedirs(MARKER_DIR, exist_ok=True)
+        self.marker = f"{MARKER_DIR}/proj__{self.sid}"
+
+    def tearDown(self):
+        try:
+            os.remove(self.marker)
+        except OSError:
+            pass
+
+    def _gate(self, cmd):
+        return run("pr-gate.py",
+                   {"session_id": self.sid, "tool_input": {"command": cmd}})
+
+    def test_asks_when_unverified(self):         # edited, no check since
+        write(self.marker, "/tmp/foo.py\n")
+        _, out, _ = self._gate("gh pr create --fill")
+        self.assertIn('"permissionDecision": "ask"', out)
+
+    def test_allows_when_verified(self):         # no marker => a check ran
+        _, out, _ = self._gate("gh pr create --fill")
+        self.assertNotIn("ask", out)
+
+    def test_ignores_non_pr_command(self):
+        write(self.marker, "/tmp/foo.py\n")
+        _, out, _ = self._gate("gh pr view 1")
+        self.assertNotIn("ask", out)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
